@@ -1,0 +1,18 @@
+[build-system]
+requires = ["uv_build>=0.11.31,<0.12"]
+build-backend = "uv_build"
+
+[project]
+name = "{{ project_name }}"
+version = "0.0.1"
+description = "{{ description }}"
+readme = "README.md"
+requires-python = ">={{ python_version }}"
+
+dependencies = []
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/{{ module_name }}"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

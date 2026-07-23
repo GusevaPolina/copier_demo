@@ -1,0 +1,37 @@
+_min_copier_version: "9.0.0"
+
+_tasks:
+  - git init
+  - git add .
+  - git commit -m 'Initial commit'
+  - gh repo create {{ project_name }} --source=. --private --push --remote=origin
+  - uv sync --all-groups
+  - uv add --group test pytest ruff
+  - uv add --group dev scipy numpy pandas matplotlib seaborn
+  - uv run pytest
+  - uv run ruff check --fix
+  - git add .
+  - git commit -m 'Dependencies configured and code formatted'
+  - git push
+  - echo 'Project {{ project_name }} generated successfully!'
+
+# Q's to fill in
+project_name:
+  type: str
+  default: my-project
+  help: Project distribution name
+  validator: >-
+    {% if not (project_name | regex_search('^[a-z][a-z0-9\-]+$')) %}
+    Use lowercase letters, numbers, and dashes; start with a letter.
+    {% endif %}
+
+description:
+  type: str
+  default: Short one-line project description
+  help: Short one-line project description
+
+python_version:
+  type: str
+  help: Python version
+  choices: ["3.14", "3.13", "3.12", "3.11"]
+  default: "3.13"
