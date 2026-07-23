@@ -1,1 +1,1 @@
-"""Init tests package 🌴"""
+"""Init tests package"""
