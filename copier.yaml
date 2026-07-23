@@ -2,19 +2,23 @@ _min_copier_version: "9.0.0"
 _subdirectory: template
 
 _tasks:
-  - git init
-  - git add .
-  - git commit -m 'Initial commit'
-  - gh repo create {{ project_name }} --source=. --private --push --remote=origin
-  - uv sync --all-groups
-  - uv add --group test pytest ruff
-  - uv add --group dev scipy numpy pandas matplotlib seaborn
-  - uv run pytest
-  - uv run ruff check --fix
-  - git add .
-  - git commit -m 'Dependencies configured and code formatted'
-  - git push
-  - echo 'Project {{ project_name }} generated successfully!'
+  - command: |
+      git init &&
+      git add . &&
+      git commit -m 'Initial commit' &&
+      gh repo create {{ project_name }} --source=. --private --push --remote=origin &&
+      uv sync --all-groups &&
+      uv add --group dev scipy numpy pandas matplotlib seaborn
+    when: "{{ _copier_operation == 'copy' }}"
+
+  - command: |
+      uv add --group test pytest ruff && 
+      uv run pytest &&
+      uv run ruff check --fix
+
+  - command: git add . && git commit -m 'Dependencies configured and code formatted' && git push
+
+  - command: echo 'Project {{ project_name }} is up to date successfully!'
 
 # Q's to fill in
 project_name:
