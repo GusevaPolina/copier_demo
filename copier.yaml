@@ -8,17 +8,22 @@ _tasks:
       git commit -m 'Initial commit' &&
       gh repo create {{ project_name }} --source=. --private --push --remote=origin &&
       uv sync --all-groups &&
-      uv add --group dev scipy numpy pandas matplotlib seaborn
+      uv add --group dev scipy numpy pandas matplotlib seaborn &&
+      uv add --group test pytest ruff &&
+      uv run pytest &&
+      uv run ruff check --fix &&
+      git add . &&
+      git commit -m 'Dependencies configured and code formatted' &&
+      git push &&
+      echo 'Project {{ project_name }} is made successfully!'
     when: "{{ _copier_operation == 'copy' }}"
 
+_migrations:
   - command: |
-      uv add --group test pytest ruff && 
+      uv sync --all-groups &&
       uv run pytest &&
       uv run ruff check --fix
-
-  - command: git add . && git commit -m 'Dependencies configured and code formatted' && git push
-
-  - command: echo 'Project {{ project_name }} is up to date successfully!'
+    when: "{{ _stage == 'after' }}"
 
 # Q's to fill in
 project_name:
